@@ -2,21 +2,21 @@
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 5px 16px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .campaign-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e0e0e0;
-
-  padding-bottom: 8px;
+  border-bottom: 2px solid #e0e0e0;
+  padding: 12px;
+  background-color: #f4f4f4; /* Dodanie tła dla wyróżnienia */
+  border-radius: 12px 12px 0 0; /* Zaokrąglone górne rogi */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Cień dla nagłówka */
 }
 
 .campaign-header-left {
@@ -27,7 +27,7 @@
 
 .campaign-header-left span {
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
   color: #333333;
 }
 
@@ -45,7 +45,7 @@
   font-size: 14px;
   color: #007bff;
   cursor: pointer;
-  transition: color 0.2s ease;
+  font-weight: 500; /* Lekkie pogrubienie */
 }
 
 .campaign-header div:last-child:hover {
@@ -53,6 +53,7 @@
 }
 
 .grid-element-body {
+  padding: 5px 16px;
   display: flex;
   flex-direction: column;
   gap: 21px;
@@ -103,4 +104,8 @@
 .radius .value {
   font-weight: bold;
   color: #007bff;
+}
+
+.icon {
+  color: #9f9f9f;
 }
