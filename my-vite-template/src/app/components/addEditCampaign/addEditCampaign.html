@@ -3,39 +3,43 @@
   <mat-dialog-content>
     <mat-form-field>
       <mat-label>Campaign Name</mat-label>
-      <input matInput required [(ngModel)]="animal" />
+      <input
+        matInput
+        required
+        [(ngModel)]="campaignName"
+        [formControl]="campaignNameControl"
+      />
+      <mat-error
+        *ngIf="numberFormControl.get('campaignName')?.hasError('required')"
+      >
+        This field is required
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field class="example-chip-list">
-      <mat-label>Favorite Fruits</mat-label>
-      <mat-chip-grid #chipGrid aria-label="Fruit selection">
-        @for (fruit of fruits(); track $index) {
-        <mat-chip-row (removed)="remove(fruit)">
-          {{fruit}}
-          <button matChipRemove [attr.aria-label]="'remove ' + fruit">
+      <mat-label>Keywords</mat-label>
+      <mat-chip-grid #chipGrid aria-label="Keyword selection">
+        @for (keyword of keywords(); track $index) {
+        <mat-chip-row (removed)="remove(keyword)">
+          {{keyword}}
+          <button matChipRemove [attr.aria-label]="'remove ' + keyword">
             <mat-icon>cancel</mat-icon>
           </button>
         </mat-chip-row>
         }
       </mat-chip-grid>
       <input
-        name="currentFruit"
-        placeholder="New Fruit..."
-        #fruitInput
-        [(ngModel)]="currentFruit"
+        name="keywords"
+        placeholder="Keyword"
+        #keywordInput
+        [(ngModel)]="currentKeyword"
         [matChipInputFor]="chipGrid"
-        [matAutocomplete]="auto"
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
         (matChipInputTokenEnd)="add($event)"
       />
-      <mat-autocomplete
-        #auto="matAutocomplete"
-        (optionSelected)="selected($event)"
-      >
-        @for (fruit of filteredFruits(); track fruit) {
-        <mat-option [value]="fruit">{{fruit}}</mat-option>
-        }
-      </mat-autocomplete>
+      <mat-error *ngIf="keywords().length === 0">
+        This field is required
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field>
@@ -46,10 +50,19 @@
         type="number"
         placeholder="0"
         required
-        [(ngModel)]="animal"
+        [(ngModel)]="bidAmount"
+        [formControl]="bidAmountControl"
       />
       <span matTextPrefix>PLN&nbsp;</span>
       <span matTextSuffix>.00</span>
+      <mat-error
+        *ngIf="numberFormControl.get('bidAmount')?.hasError('required')"
+      >
+        This field is required and accepts number only
+      </mat-error>
+      <mat-error *ngIf="numberFormControl.get('bidAmount')?.hasError('min')">
+        The minimum amount is 1000PLN.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field>
@@ -60,33 +73,59 @@
         type="number"
         placeholder="0"
         required
-        [(ngModel)]="animal"
+        [(ngModel)]="campaignFund"
+        [formControl]="campaignFundControl"
       />
       <span matTextPrefix>PLN&nbsp;</span>
       <span matTextSuffix>.00</span>
+      <mat-error
+        *ngIf="numberFormControl.get('campaignFund')?.hasError('required')"
+      >
+        This field is required and accepts number only
+      </mat-error>
+      <mat-error *ngIf="numberFormControl.get('campaignFund')?.hasError('min')">
+        The minimum amount is 1000PLN.
+      </mat-error>
     </mat-form-field>
-
-    <mat-slide-toggle ngModel name="enableWifi"
-      >Campaign Status</mat-slide-toggle
-    >
 
     <mat-form-field>
       <mat-label>Town</mat-label>
-      <mat-select [(ngModel)]="selectedValue" name="food">
-        @for (food of foods; track food) {
-        <mat-option [value]="food.value">{{food.viewValue}}</mat-option>
+      <mat-select [formControl]="townControl" [(ngModel)]="town" name="town">
+        @for (city of cities; track city) {
+        <mat-option [value]="city">{{city}}</mat-option>
         }
       </mat-select>
+      <mat-error *ngIf="numberFormControl.get('town')?.hasError('required')">
+        This field is required.
+      </mat-error>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Radius in KM</mat-label>
-      <input matInput required [(ngModel)]="animal" />
+      <span matTextSuffix> km</span>
+      <input
+        class="money-input"
+        type="number"
+        matInput
+        [formControl]="radiusControl"
+      />
+      <mat-error *ngIf="numberFormControl.get('radius')?.hasError('required')">
+        This field is required and accepts numbers only.
+      </mat-error>
     </mat-form-field>
+
+    <mat-slide-toggle [(ngModel)]="status" name="enableWifi"
+      >Campaign Status</mat-slide-toggle
+    >
   </mat-dialog-content>
   <mat-dialog-actions>
     <button mat-button (click)="onNoClick()">Cancel</button>
-    <button mat-button [mat-dialog-close]="animal()" cdkFocusInitial>
+    <button
+      [disabled]="!numberFormControl.valid || keywords().length === 0"
+      mat-button
+      cdkFocusInitial
+      (click)="onSubmit()"
+    >
       Submit
     </button>
   </mat-dialog-actions>

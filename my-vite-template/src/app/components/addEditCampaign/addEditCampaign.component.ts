@@ -1,6 +1,18 @@
-import { Component, computed, inject, model, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  Inject,
+  inject,
+  model,
+  signal,
+} from '@angular/core';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { FormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormGroup,
+  FormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import {
@@ -24,15 +36,21 @@ import {
   _MatSlideToggleRequiredValidatorModule,
 } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
+import axios from 'axios';
+import { FormControl } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NgIf } from '@angular/common';
 
 export interface DialogData {
-  animal: string;
-  name: string;
-}
-
-interface Food {
-  value: string;
-  viewValue: string;
+  campaignName: string;
+  keywords: string[];
+  bidAmount: number;
+  campaignFund: number;
+  town: string;
+  radius: number;
+  status: boolean;
 }
 
 @Component({
@@ -53,37 +71,84 @@ interface Food {
     MatAutocompleteModule,
     MatSlideToggleModule,
     MatSelectModule,
+    ReactiveFormsModule,
+    NgIf,
   ],
 })
 export class AddEditCampaign {
+  async fetchCities() {
+    try {
+      const response = await axios.get(
+        'http://api.geonames.org/searchJSON?country=PL&featureClass=P&maxRows=1000&username=bartlomiejp'
+      );
+      return response.data.geonames
+        .map((el: any) => el.toponymName)
+        .sort((a: string, b: string) => a.localeCompare(b));
+    } catch (error) {
+      console.error('Error fetching cities:', error);
+      throw error;
+    }
+  }
+  cities: string[] = [];
+
+  constructor(@Inject(MAT_DIALOG_DATA) public dialogData: DialogData) {
+    // Assuming cities are fetched or set up elsewhere in the code
+    this.cities = ['Kraków', 'Warsaw', 'Gdańsk', 'Wrocław']; // Example city list
+  }
+
+  ngOnInit() {
+    this.fetchCities()
+      .then((cities) => {
+        this.cities = cities; // Assign the result to `foods`
+        console.log('City names assigned to cities:', this.cities);
+      })
+      .catch((error) => {
+        console.error('Error fetching city names:', error);
+      });
+  }
+
   readonly dialogRef = inject(MatDialogRef<AddEditCampaign>);
   readonly data = inject<DialogData>(MAT_DIALOG_DATA);
-  readonly animal = model(this.data.animal);
+  readonly campaignName = model(this.data.campaignName);
+  // readonly keywords = model(this.data.keywords);
+  readonly bidAmount = model(this.data.bidAmount);
+  readonly campaignFund = model(this.data.campaignFund);
+  readonly town = model(this.data.town);
+  readonly radius = model(this.data.radius);
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
-  readonly currentFruit = model('');
-  readonly fruits = signal(['Lemon']);
-  readonly allFruits: string[] = [
-    'Apple',
-    'Lemon',
-    'Lime',
-    'Orange',
-    'Strawberry',
-  ];
-  selectedValue: string | undefined;
-  foods: Food[] = [
-    { value: 'steak-0', viewValue: 'Steak' },
-    { value: 'pizza-1', viewValue: 'Pizza' },
-    { value: 'tacos-2', viewValue: 'Tacos' },
-  ];
+  readonly currentKeyword = model('');
+  readonly keywords = signal(['campaign']);
+  readonly status = model(this.data.status);
 
-  readonly filteredFruits = computed(() => {
-    const currentFruit = this.currentFruit().toLowerCase();
-    return currentFruit
-      ? this.allFruits.filter((fruit) =>
-          fruit.toLowerCase().includes(currentFruit)
-        )
-      : this.allFruits.slice();
+  selectedCity: string | undefined;
+  numberFormControl = new FormGroup({
+    campaignName: new FormControl('', Validators.required),
+    bidAmount: new FormControl('', [Validators.required, Validators.min(1000)]),
+    campaignFund: new FormControl('', [
+      Validators.required,
+      Validators.min(1000),
+    ]),
+    town: new FormControl('', Validators.required),
+    radius: new FormControl('', [
+      Validators.required,
+      Validators.pattern('^[0-9]*$'),
+    ]),
   });
+  get radiusControl(): FormControl {
+    return this.numberFormControl.get('radius') as FormControl;
+  }
+  get townControl(): FormControl {
+    return this.numberFormControl.get('town') as FormControl;
+  }
+  get campaignFundControl(): FormControl {
+    return this.numberFormControl.get('campaignFund') as FormControl;
+  }
+  get bidAmountControl(): FormControl {
+    return this.numberFormControl.get('bidAmount') as FormControl;
+  }
+  get campaignNameControl(): FormControl {
+    return this.numberFormControl.get('campaignName') as FormControl;
+  }
 
   readonly announcer = inject(LiveAnnouncer);
 
@@ -92,33 +157,43 @@ export class AddEditCampaign {
 
     // Add our fruit
     if (value) {
-      this.fruits.update((fruits) => [...fruits, value]);
+      this.keywords.update((keywords) => [...keywords, value]);
     }
 
     // Clear the input value
-    this.currentFruit.set('');
+    this.currentKeyword.set('');
   }
 
-  remove(fruit: string): void {
-    this.fruits.update((fruits) => {
-      const index = fruits.indexOf(fruit);
+  remove(keyword: string): void {
+    this.keywords.update((keywords) => {
+      const index = keywords.indexOf(keyword);
       if (index < 0) {
-        return fruits;
+        return keywords;
       }
 
-      fruits.splice(index, 1);
-      this.announcer.announce(`Removed ${fruit}`);
-      return [...fruits];
+      keywords.splice(index, 1);
+      this.announcer.announce(`Removed ${keyword}`);
+      return [...keywords];
     });
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.fruits.update((fruits) => [...fruits, event.option.viewValue]);
-    this.currentFruit.set('');
+    this.keywords.update((keywords) => [...keywords, event.option.viewValue]);
+    this.currentKeyword.set('');
     event.option.deselect();
   }
 
   onNoClick(): void {
+    this.dialogRef.close();
+  }
+
+  onSubmit(): void {
+    // Log the form data to the console
+    console.log('Form Data:', {
+      bidAmount: this.numberFormControl.value,
+    });
+
+    // Close the dialog
     this.dialogRef.close();
   }
 }
