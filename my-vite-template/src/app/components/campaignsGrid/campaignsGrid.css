@@ -1,11 +1,13 @@
 .grid-container {
+  height: 73vh;
   display: grid;
   gap: 5%; /* Odstępy między elementami */
   row-gap: 10%;
-  margin: 5% 10%;
+  padding: 5% 5%;
   grid-template-columns: repeat(
     auto-fit,
     minmax(300px, 1fr)
   ); /* Responsywne kolumny */
   grid-auto-rows: calc(250px); /* Proporcja wysokości 4:3 */
+  overflow-y: scroll;
 }

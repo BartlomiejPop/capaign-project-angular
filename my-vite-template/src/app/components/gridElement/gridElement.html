@@ -1,10 +1,13 @@
-<div class="grid-element">
+<div [id]="campaign.id" class="grid-element">
   <div class="campaign-header">
     <div class="campaign-header-left">
-      <span>Campaign</span>
-      <div class="status"></div>
+      <span>{{campaign.campaignName}}</span>
+      <div
+        class="status"
+        [ngClass]="{'status-on': campaign.status === 'ON', 'status-off': campaign.status === 'OFF'}"
+      ></div>
     </div>
-    <button mat-icon-button>
+    <button mat-icon-button (click)="openDialog()">
       <mat-icon class="icon">edit</mat-icon>
     </button>
   </div>
@@ -12,26 +15,26 @@
     <div class="keywords">
       <span class="title">Keywords</span>
       <div class="value">
-        <span>wadawd</span>
-        <span>awdd</span>
-        <span>dfee</span>
+        <span class="chip" *ngFor="let keyword of campaign.keywords | slice:0:3"
+          >{{keyword}}</span
+        ><span *ngIf="campaign.keywords.length>3">...</span>
       </div>
     </div>
     <div class="bid-amount">
       <span class="title">Bid amount</span>
-      <span class="value">5000</span>
+      <span class="value">{{ campaign.bidAmount }}</span>
     </div>
     <div class="campaign-fund">
       <span class="title">Campaign fund</span>
-      <span class="value">12345</span>
+      <span class="value">{{ campaign.campaignFund }}</span>
     </div>
     <div class="town">
       <span class="title">Town</span>
-      <span class="value">Kraków</span>
+      <span class="value">{{ campaign.town }}</span>
     </div>
     <div class="radius">
       <span class="title">Radius</span>
-      <span class="value">50km</span>
+      <span class="value">{{ campaign.radius }}</span>
     </div>
   </div>
 </div>

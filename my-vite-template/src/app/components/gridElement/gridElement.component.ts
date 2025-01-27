@@ -1,9 +1,13 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common'; // Zaimportuj CommonModule
+import { NgFor } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { AddEditCampaign } from '../addEditCampaign/addEditCampaign.component';
 
 /**
  * @title Basic grid-list
@@ -18,7 +22,21 @@ import { MatButtonModule } from '@angular/material/button';
     MatProgressBarModule,
     MatIconModule,
     MatButtonModule,
+    NgFor,
+    CommonModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GridElement {}
+export class GridElement {
+  constructor(private dialog: MatDialog) {}
+  @Input() campaign: any; // Kampania przekazywana z rodzica
+  openDialog(): void {
+    this.dialog.open(AddEditCampaign, {
+      width: '80%',
+      data: {
+        animal: '',
+        name: '',
+      },
+    });
+  }
+}
