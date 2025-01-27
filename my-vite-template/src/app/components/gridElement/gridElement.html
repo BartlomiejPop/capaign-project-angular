@@ -7,7 +7,7 @@
         [ngClass]="{'status-on': campaign.status === 'ON', 'status-off': campaign.status === 'OFF'}"
       ></div>
     </div>
-    <button mat-icon-button (click)="openDialog()">
+    <button mat-icon-button (click)="openDialog(campaign)">
       <mat-icon class="icon">edit</mat-icon>
     </button>
   </div>

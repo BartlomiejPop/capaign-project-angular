@@ -1,56 +1,50 @@
+import { Component, Inject, inject, signal, model, Input } from '@angular/core';
+import { NgIf } from '@angular/common';
 import {
-  Component,
-  computed,
-  Inject,
-  inject,
-  model,
-  signal,
-} from '@angular/core';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import {
-  AbstractControl,
-  FormGroup,
   FormsModule,
+  ReactiveFormsModule,
+  FormGroup,
+  FormControl,
   Validators,
 } from '@angular/forms';
+
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
-import {
-  MAT_DIALOG_DATA,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { LiveAnnouncer } from '@angular/cdk/a11y';
-import {
-  MatSlideToggleModule,
-  _MatSlideToggleRequiredValidatorModule,
-} from '@angular/material/slide-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
+
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogClose,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+
+import { mockData, accountSumSignal } from '../../mockData';
+import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
-import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-import { ReactiveFormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
 
 export interface DialogData {
+  id: any;
   campaignName: string;
   keywords: string[];
   bidAmount: number;
   campaignFund: number;
   town: string;
   radius: number;
-  status: boolean;
+  status: string;
 }
 
 @Component({
@@ -76,6 +70,7 @@ export interface DialogData {
   ],
 })
 export class AddEditCampaign {
+  @Input() campaign = {};
   async fetchCities() {
     try {
       const response = await axios.get(
@@ -89,18 +84,34 @@ export class AddEditCampaign {
       throw error;
     }
   }
+  isEditing = false;
   cities: string[] = [];
+  isStatusChecked = false;
+  status = 'OFF';
 
-  constructor(@Inject(MAT_DIALOG_DATA) public dialogData: DialogData) {
-    // Assuming cities are fetched or set up elsewhere in the code
-    this.cities = ['Kraków', 'Warsaw', 'Gdańsk', 'Wrocław']; // Example city list
+  toggleStatus(): void {
+    this.status = this.isStatusChecked ? 'ON' : 'OFF';
+  }
+
+  constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any) {
+    if (dialogData.campaign) {
+      const currentCampaign = dialogData.campaign;
+      this.isEditing = true;
+      this.isStatusChecked = currentCampaign.status === 'ON' ? true : false;
+      this.status = currentCampaign.status;
+      this.campaignName = currentCampaign.campaignName;
+      this.keywords = signal(currentCampaign.keywords);
+      this.bidAmount = currentCampaign.bidAmount;
+      this.campaignFund = currentCampaign.campaignFund;
+      this.town = currentCampaign.town;
+      this.radius = currentCampaign.radius;
+    }
   }
 
   ngOnInit() {
     this.fetchCities()
       .then((cities) => {
-        this.cities = cities; // Assign the result to `foods`
-        console.log('City names assigned to cities:', this.cities);
+        this.cities = cities;
       })
       .catch((error) => {
         console.error('Error fetching city names:', error);
@@ -110,7 +121,6 @@ export class AddEditCampaign {
   readonly dialogRef = inject(MatDialogRef<AddEditCampaign>);
   readonly data = inject<DialogData>(MAT_DIALOG_DATA);
   readonly campaignName = model(this.data.campaignName);
-  // readonly keywords = model(this.data.keywords);
   readonly bidAmount = model(this.data.bidAmount);
   readonly campaignFund = model(this.data.campaignFund);
   readonly town = model(this.data.town);
@@ -118,7 +128,6 @@ export class AddEditCampaign {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   readonly currentKeyword = model('');
   readonly keywords = signal(['campaign']);
-  readonly status = model(this.data.status);
 
   selectedCity: string | undefined;
   numberFormControl = new FormGroup({
@@ -133,6 +142,7 @@ export class AddEditCampaign {
       Validators.required,
       Validators.pattern('^[0-9]*$'),
     ]),
+    status: new FormControl(),
   });
   get radiusControl(): FormControl {
     return this.numberFormControl.get('radius') as FormControl;
@@ -154,13 +164,9 @@ export class AddEditCampaign {
 
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
-
-    // Add our fruit
     if (value) {
       this.keywords.update((keywords) => [...keywords, value]);
     }
-
-    // Clear the input value
     this.currentKeyword.set('');
   }
 
@@ -188,12 +194,29 @@ export class AddEditCampaign {
   }
 
   onSubmit(): void {
-    // Log the form data to the console
-    console.log('Form Data:', {
-      bidAmount: this.numberFormControl.value,
-    });
+    const newCampaign = {
+      id: uuidv4(),
+      ...this.numberFormControl.value,
+      status: this.status,
+      keywords: this.keywords(),
+    };
+    if (this.dialogData.campaign) {
+      const indexOfCampaignToUpdate = mockData.indexOf(
+        this.dialogData.campaign
+      );
+      accountSumSignal.set(
+        accountSumSignal() -
+          (Number(newCampaign.campaignFund) -
+            this.dialogData.campaign.campaignFund)
+      );
+      mockData[indexOfCampaignToUpdate] = newCampaign;
+    } else {
+      mockData.unshift(newCampaign);
 
-    // Close the dialog
+      accountSumSignal.set(
+        accountSumSignal() - Number(newCampaign.campaignFund)
+      );
+    }
     this.dialogRef.close();
   }
 }

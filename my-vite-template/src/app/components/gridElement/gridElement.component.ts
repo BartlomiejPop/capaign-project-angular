@@ -29,13 +29,12 @@ import { AddEditCampaign } from '../addEditCampaign/addEditCampaign.component';
 })
 export class GridElement {
   constructor(private dialog: MatDialog) {}
-  @Input() campaign: any; // Kampania przekazywana z rodzica
-  openDialog(): void {
+  @Input() campaign: any;
+  openDialog(campaign: any): void {
     this.dialog.open(AddEditCampaign, {
       width: '80%',
       data: {
-        animal: '',
-        name: '',
+        campaign,
       },
     });
   }

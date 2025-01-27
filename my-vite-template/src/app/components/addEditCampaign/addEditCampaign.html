@@ -1,4 +1,5 @@
-<h2 mat-dialog-title>Hi</h2>
+<h2 *ngIf="this.isEditing" mat-dialog-title>Edit Campaign</h2>
+<h2 *ngIf="!this.isEditing" mat-dialog-title>Add Campaign</h2>
 <form class="dialog-form">
   <mat-dialog-content>
     <mat-form-field>
@@ -107,6 +108,7 @@
         class="money-input"
         type="number"
         matInput
+        [(ngModel)]="radius"
         [formControl]="radiusControl"
       />
       <mat-error *ngIf="numberFormControl.get('radius')?.hasError('required')">
@@ -114,12 +116,15 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-slide-toggle [(ngModel)]="status" name="enableWifi"
+    <mat-slide-toggle
+      [(ngModel)]="isStatusChecked"
+      (click)="toggleStatus()"
+      name="enableWifi"
       >Campaign Status</mat-slide-toggle
     >
   </mat-dialog-content>
   <mat-dialog-actions>
-    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button mat-dialog-close>Cancel</button>
     <button
       [disabled]="!numberFormControl.valid || keywords().length === 0"
       mat-button

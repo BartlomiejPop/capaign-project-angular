@@ -1,6 +1,9 @@
+import { signal } from '@angular/core';
 import { v4 as uuidv4 } from 'uuid';
 
-export const mockData = [
+export const accountSumSignal = signal(70000); // Initialize account sum
+
+export const mockData: any = [
   {
     id: uuidv4(),
     campaignName: 'Summer Sale Campaign',
@@ -9,7 +12,7 @@ export const mockData = [
     bidAmount: 1500,
     campaignFund: 10000,
     town: 'Kraków',
-    radius: '50km',
+    radius: 50,
   },
   {
     id: uuidv4(),
@@ -19,7 +22,7 @@ export const mockData = [
     bidAmount: 1200,
     campaignFund: 5000,
     town: 'Warsaw',
-    radius: '30km',
+    radius: 30,
   },
   {
     id: uuidv4(),
@@ -29,7 +32,7 @@ export const mockData = [
     bidAmount: 2000,
     campaignFund: 15000,
     town: 'Gdańsk',
-    radius: '100km',
+    radius: 100,
   },
   {
     id: uuidv4(),
@@ -39,7 +42,7 @@ export const mockData = [
     bidAmount: 800,
     campaignFund: 6000,
     town: 'Wrocław',
-    radius: '20km',
+    radius: 20,
   },
   {
     id: uuidv4(),
@@ -49,7 +52,7 @@ export const mockData = [
     bidAmount: 2500,
     campaignFund: 12000,
     town: 'Poznań',
-    radius: '40km',
+    radius: 40,
   },
   {
     id: uuidv4(),
@@ -59,7 +62,7 @@ export const mockData = [
     bidAmount: 1000,
     campaignFund: 8000,
     town: 'Lublin',
-    radius: '60km',
+    radius: 60,
   },
   {
     id: uuidv4(),
@@ -69,7 +72,7 @@ export const mockData = [
     bidAmount: 1800,
     campaignFund: 11000,
     town: 'Szczecin',
-    radius: '70km',
+    radius: 70,
   },
   {
     id: uuidv4(),
@@ -79,7 +82,7 @@ export const mockData = [
     bidAmount: 1500,
     campaignFund: 10000,
     town: 'Kraków',
-    radius: '50km',
+    radius: 50,
   },
   {
     id: uuidv4(),
@@ -89,7 +92,7 @@ export const mockData = [
     bidAmount: 1200,
     campaignFund: 5000,
     town: 'Warsaw',
-    radius: '30km',
+    radius: 30,
   },
   {
     id: uuidv4(),
@@ -99,7 +102,7 @@ export const mockData = [
     bidAmount: 2000,
     campaignFund: 15000,
     town: 'Gdańsk',
-    radius: '100km',
+    radius: 100,
   },
   {
     id: uuidv4(),
@@ -109,7 +112,7 @@ export const mockData = [
     bidAmount: 800,
     campaignFund: 6000,
     town: 'Wrocław',
-    radius: '20km',
+    radius: 20,
   },
   {
     id: uuidv4(),
@@ -119,7 +122,7 @@ export const mockData = [
     bidAmount: 2500,
     campaignFund: 12000,
     town: 'Poznań',
-    radius: '40km',
+    radius: 40,
   },
   {
     id: uuidv4(),
@@ -129,7 +132,7 @@ export const mockData = [
     bidAmount: 1000,
     campaignFund: 8000,
     town: 'Lublin',
-    radius: '60km',
+    radius: 60,
   },
   {
     id: uuidv4(),
@@ -139,6 +142,6 @@ export const mockData = [
     bidAmount: 1800,
     campaignFund: 11000,
     town: 'Szczecin',
-    radius: '70km',
+    radius: 70,
   },
 ];
