@@ -1,12 +1,93 @@
 <h2 mat-dialog-title>Hi</h2>
-<mat-dialog-content>
-  <p>What's your favorite animal?</p>
-  <mat-form-field>
-    <mat-label>Favorite Animal</mat-label>
-    <input matInput [(ngModel)]="animal" />
-  </mat-form-field>
-</mat-dialog-content>
-<mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="animal()" cdkFocusInitial>Ok</button>
-</mat-dialog-actions>
+<form class="dialog-form">
+  <mat-dialog-content>
+    <mat-form-field>
+      <mat-label>Campaign Name</mat-label>
+      <input matInput required [(ngModel)]="animal" />
+    </mat-form-field>
+
+    <mat-form-field class="example-chip-list">
+      <mat-label>Favorite Fruits</mat-label>
+      <mat-chip-grid #chipGrid aria-label="Fruit selection">
+        @for (fruit of fruits(); track $index) {
+        <mat-chip-row (removed)="remove(fruit)">
+          {{fruit}}
+          <button matChipRemove [attr.aria-label]="'remove ' + fruit">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        }
+      </mat-chip-grid>
+      <input
+        name="currentFruit"
+        placeholder="New Fruit..."
+        #fruitInput
+        [(ngModel)]="currentFruit"
+        [matChipInputFor]="chipGrid"
+        [matAutocomplete]="auto"
+        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+        (matChipInputTokenEnd)="add($event)"
+      />
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        (optionSelected)="selected($event)"
+      >
+        @for (fruit of filteredFruits(); track fruit) {
+        <mat-option [value]="fruit">{{fruit}}</mat-option>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Bid Amount</mat-label>
+      <input
+        class="money-input"
+        matInput
+        type="number"
+        placeholder="0"
+        required
+        [(ngModel)]="animal"
+      />
+      <span matTextPrefix>PLN&nbsp;</span>
+      <span matTextSuffix>.00</span>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Campaign Fund</mat-label>
+      <input
+        class="money-input"
+        matInput
+        type="number"
+        placeholder="0"
+        required
+        [(ngModel)]="animal"
+      />
+      <span matTextPrefix>PLN&nbsp;</span>
+      <span matTextSuffix>.00</span>
+    </mat-form-field>
+
+    <mat-slide-toggle ngModel name="enableWifi"
+      >Campaign Status</mat-slide-toggle
+    >
+
+    <mat-form-field>
+      <mat-label>Town</mat-label>
+      <mat-select [(ngModel)]="selectedValue" name="food">
+        @for (food of foods; track food) {
+        <mat-option [value]="food.value">{{food.viewValue}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Radius in KM</mat-label>
+      <input matInput required [(ngModel)]="animal" />
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Cancel</button>
+    <button mat-button [mat-dialog-close]="animal()" cdkFocusInitial>
+      Submit
+    </button>
+  </mat-dialog-actions>
+</form>
