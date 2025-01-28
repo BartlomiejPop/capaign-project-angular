@@ -2,19 +2,19 @@
 export default {
   bootstrap: () => import('./main.server.mjs').then(m => m.default),
   inlineCriticalCss: true,
-  baseHref: '/',
+  baseHref: 'https://BartlomiejPop.github.io/capaign-project-angular/',
   locale: undefined,
   routes: [
   {
     "renderMode": 2,
-    "route": "/"
+    "route": "/https://BartlomiejPop.github.io/capaign-project-angular"
   }
 ],
   entryPointToBrowserMapping: undefined,
   assets: {
-    'index.csr.html': {size: 23730, hash: 'db61f653f1ee361bbf5528a47006aae53fc9cffc48183fc81fad6d12e24fd1e9', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 17236, hash: '5ca62ee1a35d3fa62904ac64c766d7652d896fcbec6d8a8a40d8cf504c57e884', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
-    'index.html': {size: 107004, hash: 'e2eb7d477a9c10e895fea604c7f10c7a3ddeb0f50eea764342f043cbdcc42752', text: () => import('./assets-chunks/index_html.mjs').then(m => m.default)},
+    'index.csr.html': {size: 23785, hash: 'ca380778b3c04563f8ee736213b67771272a875f1159c129ada032156203d026', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 17291, hash: '7ce0d0ba9fb0c793f246812f896c763be99231bc3ce20fd9d224830162bca82c', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'index.html': {size: 107059, hash: '1a97e2cbf2bc087145db8050bbb6bf3b89964c2420bb1e5c6e71b771ca63e158', text: () => import('./assets-chunks/index_html.mjs').then(m => m.default)},
     'styles-Q65X3PUM.css': {size: 7051, hash: 'yCEf9zQbIbE', text: () => import('./assets-chunks/styles-Q65X3PUM_css.mjs').then(m => m.default)}
   },
 };
