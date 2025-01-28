@@ -8,3 +8,15 @@
 .button-text {
   color: #00dddd;
 }
+
+@media (max-width: 800px) {
+  .account-sum {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .header-title {
+    display: none;
+  }
+}
