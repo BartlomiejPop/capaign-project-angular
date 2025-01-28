@@ -15,9 +15,9 @@
   align-items: center;
   border-bottom: 2px solid #e0e0e0;
   padding: 12px;
-  background-color: #f4f4f4; /* Dodanie tła dla wyróżnienia */
-  border-radius: 12px 12px 0 0; /* Zaokrąglone górne rogi */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Cień dla nagłówka */
+  background-color: #f4f4f4;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .campaign-header-left {
@@ -60,7 +60,7 @@
   font-size: 14px;
   color: #007bff;
   cursor: pointer;
-  font-weight: 500; /* Lekkie pogrubienie */
+  font-weight: 500;
 }
 
 .campaign-header div:last-child:hover {
