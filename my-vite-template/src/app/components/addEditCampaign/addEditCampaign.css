@@ -4,6 +4,11 @@
   align-items: center;
 }
 
+h2 {
+  text-align: center;
+  color: #00dddd !important;
+}
+
 mat-form-field {
   width: 80%;
 }

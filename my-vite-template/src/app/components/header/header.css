@@ -3,3 +3,8 @@
   justify-content: space-between;
   padding: 0 10%;
 }
+
+.account-sum-value,
+.button-text {
+  color: #00dddd;
+}

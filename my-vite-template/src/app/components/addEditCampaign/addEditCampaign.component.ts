@@ -1,5 +1,5 @@
 import { Component, Inject, inject, signal, model, Input } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf, CommonModule } from '@angular/common';
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -35,6 +35,7 @@ import {
 import { mockData, accountSumSignal } from '../../mockData';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import { Observable, startWith, map } from 'rxjs';
 
 export interface DialogData {
   id: any;
@@ -67,6 +68,8 @@ export interface DialogData {
     MatSelectModule,
     ReactiveFormsModule,
     NgIf,
+    NgFor,
+    CommonModule,
   ],
 })
 export class AddEditCampaign {
@@ -84,6 +87,18 @@ export class AddEditCampaign {
       throw error;
     }
   }
+  async fetchWords() {
+    try {
+      const response = await axios.get(
+        'https://random-word-api.herokuapp.com/word?number=1000'
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching words:', error);
+      throw error;
+    }
+  }
+  keywordTips: string[] = [];
   isEditing = false;
   cities: string[] = [];
   isStatusChecked = false;
@@ -92,6 +107,9 @@ export class AddEditCampaign {
   toggleStatus(): void {
     this.status = this.isStatusChecked ? 'ON' : 'OFF';
   }
+
+  keywordControl = new FormControl('');
+  filteredKeywords: Observable<string[]>;
 
   constructor(@Inject(MAT_DIALOG_DATA) public dialogData: any) {
     if (dialogData.campaign) {
@@ -106,6 +124,10 @@ export class AddEditCampaign {
       this.town = currentCampaign.town;
       this.radius = currentCampaign.radius;
     }
+    this.filteredKeywords = this.keywordControl.valueChanges.pipe(
+      startWith(''), // Początkowa wartość
+      map((value) => this._filter(value || '')) // Wywołanie funkcji filtrowania
+    );
   }
 
   ngOnInit() {
@@ -116,6 +138,21 @@ export class AddEditCampaign {
       .catch((error) => {
         console.error('Error fetching city names:', error);
       });
+
+    this.fetchWords()
+      .then((words) => {
+        this.keywordTips = words;
+      })
+      .catch((error) => {
+        console.error('Error fetching city names:', error);
+      });
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.keywordTips.filter((keyword) =>
+      keyword.toLowerCase().includes(filterValue)
+    );
   }
 
   readonly dialogRef = inject(MatDialogRef<AddEditCampaign>);
@@ -130,12 +167,14 @@ export class AddEditCampaign {
   readonly keywords = signal(['campaign']);
 
   selectedCity: string | undefined;
+
   numberFormControl = new FormGroup({
     campaignName: new FormControl('', Validators.required),
-    bidAmount: new FormControl('', [Validators.required, Validators.min(1000)]),
+    bidAmount: new FormControl('', [Validators.required, Validators.min(1)]),
     campaignFund: new FormControl('', [
       Validators.required,
       Validators.min(1000),
+      Validators.max(accountSumSignal()),
     ]),
     town: new FormControl('', Validators.required),
     radius: new FormControl('', [
@@ -162,12 +201,21 @@ export class AddEditCampaign {
 
   readonly announcer = inject(LiveAnnouncer);
 
+  addKeyword(keyword: string): void {
+    const event = { value: keyword.trim() } as MatChipInputEvent;
+    this.keywordControl.setValue('');
+    this.add(event);
+  }
+
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value) {
       this.keywords.update((keywords) => [...keywords, value]);
     }
-    this.currentKeyword.set('');
+
+    if (event.chipInput) {
+      event.chipInput.clear();
+    }
   }
 
   remove(keyword: string): void {

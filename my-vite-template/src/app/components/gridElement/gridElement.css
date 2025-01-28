@@ -1,6 +1,6 @@
 .grid-element {
   background-color: #ffffff;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #00dddd;
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -30,6 +30,10 @@
   font-weight: bold;
   font-size: 18px;
   color: #333333;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 12rem;
 }
 
 .status {
@@ -95,11 +99,11 @@
 .keywords .value .chip {
   white-space: nowrap;
   text-overflow: ellipsis;
-  background-color: #f0f0f0;
+  background-color: #d5d5d5;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 13px;
-  color: #333333;
+  color: #00acac;
 }
 
 .bid-amount,
@@ -116,9 +120,22 @@
 .town .value,
 .radius .value {
   font-weight: bold;
-  color: #007bff;
+  color: #00dddd;
 }
 
-.icon {
-  color: #9f9f9f;
+.edit-icon {
+  color: #00dddd;
+}
+
+.delete-icon {
+  color: #ed6262;
+}
+
+.delete-campaign-text {
+  color: #ed6262;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0;
 }

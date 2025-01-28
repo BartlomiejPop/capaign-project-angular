@@ -33,11 +33,19 @@
         name="keywords"
         placeholder="Keyword"
         #keywordInput
-        [(ngModel)]="currentKeyword"
+        [formControl]="keywordControl"
+        [matAutocomplete]="auto"
         [matChipInputFor]="chipGrid"
         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
         (matChipInputTokenEnd)="add($event)"
       />
+      <mat-autocomplete #auto="matAutocomplete">
+        <mat-option
+          *ngFor="let keyword of filteredKeywords | async"
+          (click)="addKeyword(keyword)"
+          >{{keyword}}</mat-option
+        >
+      </mat-autocomplete>
       <mat-error *ngIf="keywords().length === 0">
         This field is required
       </mat-error>
@@ -62,7 +70,7 @@
         This field is required and accepts number only
       </mat-error>
       <mat-error *ngIf="numberFormControl.get('bidAmount')?.hasError('min')">
-        The minimum amount is 1000PLN.
+        The minimum amount is 1PLN.
       </mat-error>
     </mat-form-field>
 
@@ -84,6 +92,9 @@
       >
         This field is required and accepts number only
       </mat-error>
+      <mat-error *ngIf="numberFormControl.get('campaignFund')?.hasError('max')">
+        Not enough money on emerald account
+      </mat-error>
       <mat-error *ngIf="numberFormControl.get('campaignFund')?.hasError('min')">
         The minimum amount is 1000PLN.
       </mat-error>
@@ -103,7 +114,7 @@
 
     <mat-form-field>
       <mat-label>Radius in KM</mat-label>
-      <span matTextSuffix> km</span>
+      <span matTextSuffix></span>
       <input
         class="money-input"
         type="number"
@@ -111,6 +122,7 @@
         [(ngModel)]="radius"
         [formControl]="radiusControl"
       />
+      <span matTextPrefix>KM&nbsp;</span>
       <mat-error *ngIf="numberFormControl.get('radius')?.hasError('required')">
         This field is required and accepts numbers only.
       </mat-error>
