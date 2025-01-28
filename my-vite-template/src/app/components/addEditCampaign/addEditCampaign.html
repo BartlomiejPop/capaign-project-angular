@@ -107,6 +107,7 @@
         <mat-option [value]="city">{{city}}</mat-option>
         }
       </mat-select>
+
       <mat-error *ngIf="numberFormControl.get('town')?.hasError('required')">
         This field is required.
       </mat-error>

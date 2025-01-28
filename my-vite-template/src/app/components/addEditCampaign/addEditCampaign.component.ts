@@ -32,7 +32,7 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 
-import { mockData, accountSumSignal } from '../../mockData';
+import { mockData, accountSumSignal, cities } from '../../mockData';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { Observable, startWith, map } from 'rxjs';
@@ -74,19 +74,7 @@ export interface DialogData {
 })
 export class AddEditCampaign {
   @Input() campaign = {};
-  async fetchCities() {
-    try {
-      const response = await axios.get(
-        'http://api.geonames.org/searchJSON?country=PL&featureClass=P&maxRows=1000&username=bartlomiejp'
-      );
-      return response.data.geonames
-        .map((el: any) => el.toponymName)
-        .sort((a: string, b: string) => a.localeCompare(b));
-    } catch (error) {
-      console.error('Error fetching cities:', error);
-      throw error;
-    }
-  }
+
   async fetchWords() {
     try {
       const response = await axios.get(
@@ -94,13 +82,12 @@ export class AddEditCampaign {
       );
       return response.data;
     } catch (error) {
-      console.error('Error fetching words:', error);
       throw error;
     }
   }
   keywordTips: string[] = [];
   isEditing = false;
-  cities: string[] = [];
+  cities = cities;
   isStatusChecked = false;
   status = 'OFF';
 
@@ -125,26 +112,18 @@ export class AddEditCampaign {
       this.radius = currentCampaign.radius;
     }
     this.filteredKeywords = this.keywordControl.valueChanges.pipe(
-      startWith(''), // Początkowa wartość
-      map((value) => this._filter(value || '')) // Wywołanie funkcji filtrowania
+      startWith(''),
+      map((value) => this._filter(value || ''))
     );
   }
 
   ngOnInit() {
-    this.fetchCities()
-      .then((cities) => {
-        this.cities = cities;
-      })
-      .catch((error) => {
-        console.error('Error fetching city names:', error);
-      });
-
     this.fetchWords()
       .then((words) => {
         this.keywordTips = words;
       })
       .catch((error) => {
-        console.error('Error fetching city names:', error);
+        console.error('Error fetching words:', error);
       });
   }
 
